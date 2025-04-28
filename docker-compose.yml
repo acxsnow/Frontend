@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  boca:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+      - "5432:5432"
+    volumes:
+      - boca_data:/var/lib/postgresql/12/main
+      - ./src:/var/www/html/boca/src
+    environment:
+      - TZ=UTC
+      - POSTGRES_PASSWORD=boca
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  boca_data:
+    driver: local 
